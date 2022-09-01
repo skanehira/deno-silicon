@@ -1,0 +1,17 @@
+[package]
+name = "deno-silicon"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+anyhow = "1.0.62"
+base64 = "0.13.0"
+silicon = "0.4.3"
+syntect = "4.5.0"
+deno_bindgen = "0.6.0"
+serde = { version = "1", features = ["derive"] }
+image = "0.23.14"
+font-kit = { version= "0.10", features = ["loader-freetype-default", "source-fontconfig-default"] }
