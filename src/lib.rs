@@ -1,3 +1,5 @@
+#![allow(clippy::not_unsafe_ptr_arg_deref)]
+
 pub use std::io;
 
 use anyhow::{anyhow, Result};
@@ -110,7 +112,8 @@ fn parse_line_range(s: String) -> Result<Vec<u32>> {
 }
 
 fn parse_color(s: String) -> Result<Rgba<u8>> {
-    Ok(s.to_rgba().map_err(|x| anyhow!("invalid color: {}", x))?)
+    let color = s.to_rgba().map_err(|x| anyhow!("invalid color: {}", x))?;
+    Ok(color)
 }
 
 fn run(opts: Options) -> Result<Vec<u8>> {
@@ -119,12 +122,12 @@ fn run(opts: Options) -> Result<Vec<u8>> {
 
     let syntax = ps
         .find_syntax_by_token(opts.language.as_str())
-        .ok_or(anyhow!("unsupported language"))?;
+        .ok_or_else(|| anyhow!("unsupported language"))?;
 
     let theme = &ts
         .themes
         .get(&opts.theme)
-        .ok_or(anyhow!("unsupported theme"))?;
+        .ok_or_else(|| anyhow!("unsupported theme"))?;
 
     let mut h = HighlightLines::new(syntax, theme);
     let highlight = LinesWithEndings::from(&code)
@@ -188,6 +191,12 @@ mod tests {
 
     use super::*;
 
+    fn assert_image(raw: Vec<u8>) {
+        let png_header: Vec<u8> = vec![0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+        let raw_header = &raw[..8];
+        assert_eq!(raw_header, png_header);
+    }
+
     #[test]
     fn test_run() {
         let mut source = File::open(Path::new("testdata/main.rs")).unwrap();
@@ -216,10 +225,6 @@ mod tests {
         };
 
         let got = run(opts).unwrap();
-
-        let mut file = File::open(Path::new("testdata/out.png")).unwrap();
-        let mut want = Vec::<u8>::new();
-        file.read_to_end(&mut want).unwrap();
-        assert_eq!(got, want);
+        assert_image(got);
     }
 }
