@@ -1,6 +1,8 @@
 # deno-silicon
 Deno module to generate images from source code using [Aloxaf/silicon](https://github.com/Aloxaf/silicon).
 
+![](https://i.gyazo.com/ab38b1037f15fb0c8132264ced695067.png)
+
 ## Dependencies
 Please refer silicon's [dependencies](https://github.com/Aloxaf/silicon#dependencies)
 
