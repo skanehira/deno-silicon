@@ -24,10 +24,6 @@ endif
 clean:
 	@rm -f $(DENO_DIR)/plug/file/*.$(LIB_EXT)
 
-.PHONY: run
-run: clean
-	@deno run -A --unstable mod.ts
-
 .PHONY: build
 build: clean
 	@deno_bindgen $(URL)

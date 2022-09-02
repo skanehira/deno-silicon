@@ -1,11 +1,14 @@
 import { themeList, generateImage } from "./mod.ts";
-import {
-  assertRejects,
-  assertEquals,
-  assertNotEquals,
-  io,
-  path,
-} from "./deps.ts";
+import { assertRejects, assertEquals, assertNotEquals, path } from "./deps.ts";
+import { readAll } from "https://deno.land/std@0.153.0/streams/conversion.ts";
+
+function assertImage(data: Uint8Array) {
+  const header = data.slice(0, 8);
+  const pngHeader = new Uint8Array([
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+  ]);
+  assertEquals(header, pngHeader);
+}
 
 Deno.test({
   name: "get theme list",
@@ -28,11 +31,8 @@ func main() {
     fmt.Println("Hello World")
 }`;
     const r = await generateImage(code, "go");
-    const buffer = new io.Buffer();
-    await buffer.readFrom(r);
-    const got = buffer.bytes();
-    const want = await Deno.readFile(path.join("testdata", "out2.png"));
-    assertEquals(got, want);
+    const got = await readAll(r);
+    assertImage(got);
   },
 });
 
@@ -59,11 +59,8 @@ Deno.test({
       tab_width: 10,
       theme: "Solarized (dark)",
     });
-    const buffer = new io.Buffer();
-    await buffer.readFrom(r);
-    const got = buffer.bytes();
-    const want = await Deno.readFile(path.join("testdata", "out.png"));
-    assertEquals(got, want);
+    const got = await readAll(r);
+    assertImage(got);
   },
 });
 
