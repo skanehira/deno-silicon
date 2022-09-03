@@ -69,14 +69,6 @@ Deno.test({
   fn: async () => {
     await assertRejects(
       async () => {
-        await generateImage("", "hoge");
-      },
-      Error,
-      "unsupported language"
-    );
-
-    await assertRejects(
-      async () => {
         await generateImage("", "rs", { theme: "hoge" });
       },
       Error,
