@@ -119,10 +119,13 @@ fn parse_color(s: String) -> Result<Rgba<u8>> {
 fn run(opts: Options) -> Result<Vec<u8>> {
     let (ps, ts) = init_syntect();
     let code = opts.code;
+    let lang = opts.language.as_str();
 
-    let syntax = ps
-        .find_syntax_by_token(opts.language.as_str())
-        .ok_or_else(|| anyhow!("unsupported language"))?;
+    let syntax = if let Some(syntax) = ps.find_syntax_by_token(lang) {
+        syntax
+    } else {
+        ps.find_syntax_by_token("txt").unwrap()
+    };
 
     let theme = &ts
         .themes
@@ -197,14 +200,9 @@ mod tests {
         assert_eq!(raw_header, png_header);
     }
 
-    #[test]
-    fn test_run() {
-        let mut source = File::open(Path::new("testdata/main.rs")).unwrap();
-        let mut contents = String::new();
-        source.read_to_string(&mut contents).unwrap();
-
-        let opts = Options {
-            code: contents,
+    fn default_opts() -> Options {
+        Options {
+            code: "".into(),
             language: "rs".into(),
             no_line_number: true,
             no_round_corner: false,
@@ -222,7 +220,27 @@ mod tests {
             shadow_color: "#003399".into(),
             tab_width: 10,
             theme: "Solarized (dark)".into(),
-        };
+        }
+    }
+
+    #[test]
+    fn test_run() {
+        let mut source = File::open(Path::new("testdata/main.rs")).unwrap();
+        let mut contents = String::new();
+        source.read_to_string(&mut contents).unwrap();
+
+        let mut opts = default_opts();
+        opts.code = contents;
+
+        let got = run(opts).unwrap();
+        assert_image(got);
+    }
+
+    #[test]
+    fn test_run_without_lang() {
+        let mut opts = default_opts();
+        opts.code = "hoge".into();
+        opts.language = "".into();
 
         let got = run(opts).unwrap();
         assert_image(got);

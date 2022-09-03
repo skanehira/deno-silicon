@@ -20,10 +20,7 @@ function readPointer(v: any): Uint8Array {
   return buf
 }
 
-const url = new URL(
-  "https://github.com/skanehira/deno-silicon/releases/download/v0.0.1/",
-  import.meta.url,
-)
+const url = new URL("../target/debug", import.meta.url)
 let uri = url.toString()
 if (!uri.endsWith("/")) uri += "/"
 
@@ -46,7 +43,7 @@ const opts = {
     windows: uri + "deno_silicon.dll",
     linux: uri + "libdeno_silicon.so",
   },
-  policy: undefined,
+  policy: CachePolicy.NONE,
 }
 const _lib = await prepare(opts, {
   font_list: { parameters: [], result: "pointer", nonblocking: false },
