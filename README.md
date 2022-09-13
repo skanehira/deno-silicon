@@ -9,11 +9,11 @@ Please refer silicon's [dependencies](https://github.com/Aloxaf/silicon#dependen
 ## Usage
 You can call `generateImage(code, language, options)` to generates image from source code.
 
-```ts
+```typescript
 const code = `package main
 
 import {
-  "fmt"
+    "fmt"
 }
 
 func main() {
