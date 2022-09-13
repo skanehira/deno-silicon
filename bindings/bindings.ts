@@ -21,7 +21,7 @@ function readPointer(v: any): Uint8Array {
 }
 
 const url = new URL(
-  "https://github.com/skanehira/deno-silicon/releases/download/v0.0.2/",
+  "https://github.com/skanehira/deno-silicon/releases/download/v0.0.3/",
   import.meta.url,
 )
 let uri = url.toString()
@@ -105,7 +105,8 @@ export function font_list() {
 }
 export function generate(a0: Options) {
   const a0_buf = encode(JSON.stringify(a0))
-  let rawResult = _lib.symbols.generate(a0_buf, a0_buf.byteLength)
+  const a0_ptr = Deno.UnsafePointer.of(a0_buf)
+  let rawResult = _lib.symbols.generate(a0_ptr, a0_buf.byteLength)
   const result = readPointer(rawResult)
   return JSON.parse(decode(result)) as SiliconResult
 }
