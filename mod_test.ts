@@ -1,11 +1,18 @@
-import { themeList, generateImage } from "./mod.ts";
-import { assertRejects, assertEquals, assertNotEquals, path } from "./deps.ts";
+import { generateImage, themeList } from "./mod.ts";
+import { assertEquals, assertNotEquals, assertRejects, path } from "./deps.ts";
 import { readAll } from "https://deno.land/std@0.153.0/streams/conversion.ts";
 
 function assertImage(data: Uint8Array) {
   const header = data.slice(0, 8);
   const pngHeader = new Uint8Array([
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+    0x89,
+    0x50,
+    0x4e,
+    0x47,
+    0x0d,
+    0x0a,
+    0x1a,
+    0x0a,
   ]);
   assertEquals(header, pngHeader);
 }
@@ -40,7 +47,7 @@ Deno.test({
   name: "generate image with options",
   fn: async () => {
     const code = new TextDecoder().decode(
-      await Deno.readFile(path.join("testdata", "main.rs"))
+      await Deno.readFile(path.join("testdata", "main.rs")),
     );
     const r = await generateImage(code, "rs", {
       no_line_number: true,
@@ -72,7 +79,7 @@ Deno.test({
         await generateImage("", "rs", { theme: "hoge" });
       },
       Error,
-      "unsupported theme"
+      "unsupported theme",
     );
 
     await assertRejects(
@@ -80,7 +87,7 @@ Deno.test({
         await generateImage("", "rs", { background_color: "hoge" });
       },
       Error,
-      "invalid color: Invalid digit"
+      "invalid color: Invalid digit",
     );
 
     await assertRejects(
@@ -88,7 +95,7 @@ Deno.test({
         await generateImage("", "rs", { highlight_lines: "1;" });
       },
       Error,
-      "cannot parse integer from empty string"
+      "cannot parse integer from empty string",
     );
   },
 });

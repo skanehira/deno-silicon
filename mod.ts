@@ -1,8 +1,8 @@
 import {
   font_list,
-  theme_list,
-  Options,
   generate,
+  Options,
+  theme_list,
 } from "./bindings/bindings.ts";
 import { base64, io } from "./deps.ts";
 
@@ -15,7 +15,7 @@ const isFontList = (x: unknown): x is { FontList: { data: Array<string> } } => {
 };
 
 const isThemeList = (
-  x: unknown
+  x: unknown,
 ): x is { ThemeList: { data: Array<string> } } => {
   return typeof x == "object" && x !== null && "ThemeList" in x;
 };
@@ -74,7 +74,7 @@ export type Option = Partial<Omit<Options, "code" | "language">>;
 export async function generateImage(
   code: string,
   language: string,
-  opts?: Option
+  opts?: Option,
 ): Promise<Deno.Reader> {
   defaultOptions.code = code;
   defaultOptions.language = language;
