@@ -78,9 +78,6 @@ pub struct Options {
 
 fn parse_font(s: String) -> Vec<(String, f32)> {
     let mut result = vec![];
-    if s.is_empty() {
-        return result;
-    }
     for font in s.split(';') {
         let tmp = font.split('=').collect::<Vec<_>>();
         let font_name = tmp[0].to_owned();
@@ -132,6 +129,15 @@ fn run(opts: Options) -> Result<Vec<u8>> {
         .get(&opts.theme)
         .ok_or_else(|| anyhow!("unsupported theme"))?;
 
+    let source = font_kit::source::SystemSource::new();
+
+    let all_fonts = source.all_families().map_err(|x| anyhow!("{}", x))?;
+    let font = if opts.font.is_empty() || !all_fonts.contains(&opts.font) {
+        vec![]
+    } else {
+        parse_font(opts.font)
+    };
+
     let mut h = HighlightLines::new(syntax, theme);
     let highlight = LinesWithEndings::from(&code)
         .map(|line| h.highlight(line, &ps))
@@ -158,7 +164,7 @@ fn run(opts: Options) -> Result<Vec<u8>> {
         .line_pad(opts.line_pad)
         .window_controls(!opts.no_window_controls)
         .line_number(!opts.no_line_number)
-        .font(parse_font(opts.font))
+        .font(font)
         .round_corner(!opts.no_round_corner)
         .shadow_adder(shadow_adder)
         .tab_width(opts.tab_width)
@@ -241,6 +247,16 @@ mod tests {
         let mut opts = default_opts();
         opts.code = "hoge".into();
         opts.language = "".into();
+
+        let got = run(opts).unwrap();
+        assert_image(got);
+    }
+
+    #[test]
+    fn test_run_not_found_font() {
+        let mut opts = default_opts();
+        opts.code = "hoge".into();
+        opts.font = "not_found".into();
 
         let got = run(opts).unwrap();
         assert_image(got);
