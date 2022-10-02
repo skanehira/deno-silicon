@@ -2,7 +2,7 @@
 
 pub use std::io;
 
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Context, Result};
 use deno_bindgen::deno_bindgen;
 use image::{ImageOutputFormat, Rgba};
 use silicon::formatter::ImageFormatterBuilder;
@@ -109,7 +109,7 @@ fn parse_line_range(s: String) -> Result<Vec<u32>> {
 }
 
 fn parse_color(s: String) -> Result<Rgba<u8>> {
-    let color = s.to_rgba().map_err(|x| anyhow!("invalid color: {}", x))?;
+    let color = s.to_rgba().context("invalid color")?;
     Ok(color)
 }
 
@@ -131,7 +131,9 @@ fn run(opts: Options) -> Result<Vec<u8>> {
 
     let source = font_kit::source::SystemSource::new();
 
-    let all_fonts = source.all_families().map_err(|x| anyhow!("{}", x))?;
+    let all_fonts = source
+        .all_families()
+        .context("cannot get all font families")?;
     let font = if opts.font.is_empty() || !all_fonts.contains(&opts.font) {
         vec![]
     } else {
