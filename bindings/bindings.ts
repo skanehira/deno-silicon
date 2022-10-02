@@ -21,7 +21,7 @@ function readPointer(v: any): Uint8Array {
 }
 
 const url = new URL(
-  "https://github.com/skanehira/deno-silicon/releases/download/v0.0.3/",
+  "https://github.com/skanehira/deno-silicon/releases/download/v0.0.4/",
   import.meta.url,
 )
 let uri = url.toString()
