@@ -87,7 +87,7 @@ Deno.test({
         await generateImage("", "rs", { background_color: "hoge" });
       },
       Error,
-      "invalid color: Invalid digit",
+      "cannot generate image: invalid color",
     );
 
     await assertRejects(
