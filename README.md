@@ -12,6 +12,7 @@ Please refer silicon's [dependencies](https://github.com/Aloxaf/silicon#dependen
 |----------------|----------------------|
 | v0.0.2         | `v1.24.3` or earlier |
 | v0.0.3 ~       | `v1.25.0` or later   |
+| v0.0.5 ~       | `v1.32.4` or later   |
 
 ## Usage
 You can call `generateImage(code, language, options)` to generates image from source code.
