@@ -1,6 +1,4 @@
 // Auto-generated with deno_bindgen
-import { CachePolicy, prepare } from "https://deno.land/x/plug@0.5.2/plug.ts"
-
 function encode(v: string | Uint8Array): Uint8Array {
   if (typeof v !== "string") return v
   return new TextEncoder().encode(v)
@@ -10,8 +8,9 @@ function decode(v: Uint8Array): string {
   return new TextDecoder().decode(v)
 }
 
+// deno-lint-ignore no-explicit-any
 function readPointer(v: any): Uint8Array {
-  const ptr = new Deno.UnsafePointerView(v as bigint)
+  const ptr = new Deno.UnsafePointerView(v)
   const lengthBe = new Uint8Array(4)
   const view = new DataView(lengthBe.buffer)
   ptr.copyInto(lengthBe, 0)
@@ -21,41 +20,33 @@ function readPointer(v: any): Uint8Array {
 }
 
 const url = new URL(
-  "https://github.com/skanehira/deno-silicon/releases/download/v0.0.4/",
+  "https://github.com/skanehira/deno-silicon/releases/download/v0.0.5/",
   import.meta.url,
 )
+
+import { dlopen, FetchOptions } from "https://deno.land/x/plug@1.0.1/mod.ts"
 let uri = url.toString()
 if (!uri.endsWith("/")) uri += "/"
 
 let darwin: string | { aarch64: string; x86_64: string } = uri
-  + "libdeno_silicon.dylib"
 
-if (url.protocol !== "file:") {
-  // Assume that remote assets follow naming scheme
-  // for each macOS artifact.
-  darwin = {
-    aarch64: uri + "libdeno_silicon_arm64.dylib",
-    x86_64: uri + "libdeno_silicon.dylib",
-  }
-}
-
-const opts = {
+const opts: FetchOptions = {
   name: "deno_silicon",
-  urls: {
+  url: {
     darwin,
-    windows: uri + "deno_silicon.dll",
-    linux: uri + "libdeno_silicon.so",
+    windows: uri,
+    linux: uri,
   },
-  policy: undefined,
+  cache: "use",
 }
-const _lib = await prepare(opts, {
-  font_list: { parameters: [], result: "pointer", nonblocking: false },
+const { symbols } = await dlopen(opts, {
+  font_list: { parameters: [], result: "buffer", nonblocking: false },
   generate: {
-    parameters: ["pointer", "usize"],
-    result: "pointer",
+    parameters: ["buffer", "usize"],
+    result: "buffer",
     nonblocking: false,
   },
-  theme_list: { parameters: [], result: "pointer", nonblocking: false },
+  theme_list: { parameters: [], result: "buffer", nonblocking: false },
 })
 export type Options = {
   code: string
@@ -99,19 +90,19 @@ export type SiliconResult =
     }
   }
 export function font_list() {
-  let rawResult = _lib.symbols.font_list()
+  const rawResult = symbols.font_list()
   const result = readPointer(rawResult)
   return JSON.parse(decode(result)) as SiliconResult
 }
 export function generate(a0: Options) {
   const a0_buf = encode(JSON.stringify(a0))
-  const a0_ptr = Deno.UnsafePointer.of(a0_buf)
-  let rawResult = _lib.symbols.generate(a0_ptr, a0_buf.byteLength)
+
+  const rawResult = symbols.generate(a0_buf, a0_buf.byteLength)
   const result = readPointer(rawResult)
   return JSON.parse(decode(result)) as SiliconResult
 }
 export function theme_list() {
-  let rawResult = _lib.symbols.theme_list()
+  const rawResult = symbols.theme_list()
   const result = readPointer(rawResult)
   return JSON.parse(decode(result)) as SiliconResult
 }
