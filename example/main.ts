@@ -1,4 +1,4 @@
-import * as silicon from "https://deno.land/x/silicon@v0.0.3/mod.ts";
+import * as silicon from "https://deno.land/x/silicon@v0.0.6/mod.ts";
 import { readAll } from "https://deno.land/std@0.153.0/streams/conversion.ts";
 
 const code = `package main
