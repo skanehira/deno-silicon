@@ -1,11 +1,10 @@
-import { generateImage, themeList } from "./mod.ts";
 import {
   assertEquals,
   assertNotEquals,
-  assertRejects,
+  assertThrows,
   path,
-  readAll,
 } from "./deps_test.ts";
+import { generate, themeList } from "./silicon.ts";
 
 function assertImage(data: Uint8Array) {
   const header = data.slice(0, 8);
@@ -32,7 +31,7 @@ Deno.test({
 
 Deno.test({
   name: "generate image",
-  fn: async () => {
+  fn: () => {
     const code = `package main
 
 import {
@@ -42,8 +41,7 @@ import {
 func main() {
     fmt.Println("Hello World")
 }`;
-    const r = await generateImage(code, "go");
-    const got = await readAll(r);
+    const got = generate(code, "go");
     assertImage(got);
   },
 });
@@ -54,7 +52,7 @@ Deno.test({
     const code = new TextDecoder().decode(
       await Deno.readFile(path.join("testdata", "main.rs")),
     );
-    const r = await generateImage(code, "rs", {
+    const got = generate(code, "rs", {
       no_line_number: true,
       no_round_corner: false,
       no_window_controls: true,
@@ -71,33 +69,32 @@ Deno.test({
       tab_width: 10,
       theme: "Solarized (dark)",
     });
-    const got = await readAll(r);
     assertImage(got);
   },
 });
 
 Deno.test({
   name: "invalid options",
-  fn: async () => {
-    await assertRejects(
-      async () => {
-        await generateImage("", "rs", { theme: "hoge" });
+  fn: () => {
+    assertThrows(
+      () => {
+        generate("", "rs", { theme: "hoge" });
       },
       Error,
       "unsupported theme",
     );
 
-    await assertRejects(
-      async () => {
-        await generateImage("", "rs", { background_color: "hoge" });
+    assertThrows(
+      () => {
+        generate("", "rs", { background_color: "hoge" });
       },
       Error,
       "cannot generate image: invalid color",
     );
 
-    await assertRejects(
-      async () => {
-        await generateImage("", "rs", { highlight_lines: "1;" });
+    assertThrows(
+      () => {
+        generate("", "rs", { highlight_lines: "1;" });
       },
       Error,
       "cannot parse integer from empty string",
