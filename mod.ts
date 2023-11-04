@@ -4,25 +4,31 @@ import {
   Options,
   theme_list,
 } from "./bindings/bindings.ts";
-import { base64, io } from "./deps.ts";
+import { base64, io, is } from "./deps.ts";
 
-const isError = (x: unknown): x is { Error: { error: string } } => {
-  return typeof x == "object" && x !== null && "Error" in x;
-};
+const isError = is.ObjectOf({
+  Error: is.ObjectOf({
+    error: is.String,
+  }),
+});
 
-const isFontList = (x: unknown): x is { FontList: { data: Array<string> } } => {
-  return typeof x == "object" && x !== null && "FontList" in x;
-};
+const isFontList = is.ObjectOf({
+  FontList: is.ObjectOf({
+    data: is.ArrayOf(is.String),
+  }),
+});
 
-const isThemeList = (
-  x: unknown,
-): x is { ThemeList: { data: Array<string> } } => {
-  return typeof x == "object" && x !== null && "ThemeList" in x;
-};
+const isThemeList = is.ObjectOf({
+  ThemeList: is.ObjectOf({
+    data: is.ArrayOf(is.String),
+  }),
+});
 
-const isImage = (x: unknown): x is { Image: { data: string } } => {
-  return typeof x == "object" && x !== null && "Image" in x;
-};
+const isImage = is.ObjectOf({
+  Image: is.ObjectOf({
+    data: is.String,
+  }),
+});
 
 export function fontList(): string[] {
   const result = font_list();
@@ -70,7 +76,7 @@ export type Option = Partial<Omit<Options, "code" | "language">>;
  * Generates image from source code.
  * You can specify several options, such as theme.
  * The options conform to silicon options, see silicon help for details.
- * */
+ */
 export async function generateImage(
   code: string,
   language: string,
