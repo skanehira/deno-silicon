@@ -38,41 +38,41 @@ pub fn theme_list() -> SiliconResult {
 
 #[deno_bindgen]
 pub struct Options {
-    // Source code
+    /// Source code
     code: String,
-    // full name ("Rust") or file extension ("rs")
+    /// full name ("Rust") or file extension ("rs")
     language: String,
-    // Hide the line number
+    /// Hide the line number
     no_line_number: bool,
-    // Don't round the corner
+    /// Don't round the corner
     no_round_corner: bool,
-    // Hide the window controls
+    /// Hide the window controls
     no_window_controls: bool,
-    // Background color of the image [default: #aaaaff]
+    /// Background color of the image [default: #aaaaff]
     background_color: String,
-    // The fallback font list. eg. 'Hack; SimSun=31'
+    /// The fallback font list. eg. 'Hack; SimSun=31'
     font: String,
-    // Lines to high light. rg. '1-3; 4'
+    /// Lines to high light. rg. '1-3; 4'
     highlight_lines: String,
-    // Line number offset [default: 1]
+    /// Line number offset [default: 1]
     line_offset: u32,
-    // Pad between lines [default: 2]
+    /// Pad between lines [default: 2]
     line_pad: u32,
-    // Pad horiz [default: 80]
+    /// Pad horiz [default: 80]
     pad_horiz: u32,
-    // Pad vert [default: 100]
+    /// Pad vert [default: 100]
     pad_vert: u32,
-    // Blur radius of the shadow. (set it to 0 to hide shadow) [default: 0]
+    /// Blur radius of the shadow. (set it to 0 to hide shadow) [default: 0]
     shadow_blur_radius: f32,
-    // Color of shadow [default: #555555]
+    /// Color of shadow [default: #555555]
     shadow_color: String,
-    // Shadow's offset in X axis [default: 0]
+    /// Shadow's offset in X axis [default: 0]
     shadow_offset_x: i32,
-    // Shadow's offset in Y axis [default: 0]
+    /// Shadow's offset in Y axis [default: 0]
     shadow_offset_y: i32,
-    // Tab width [default: 4]
+    /// Tab width [default: 4]
     tab_width: u8,
-    // The syntax highlight theme. It can be a theme name or path to a .tmTheme file [default: Dracula]
+    /// The syntax highlight theme. It can be a theme name or path to a .tmTheme file [default: Dracula]
     theme: String,
 }
 
