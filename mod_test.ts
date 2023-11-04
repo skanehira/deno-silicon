@@ -1,6 +1,11 @@
 import { generateImage, themeList } from "./mod.ts";
-import { assertEquals, assertNotEquals, assertRejects, path } from "./deps.ts";
-import { readAll } from "https://deno.land/std@0.153.0/streams/conversion.ts";
+import {
+  assertEquals,
+  assertNotEquals,
+  assertRejects,
+  path,
+  readAll,
+} from "./deps_test.ts";
 
 function assertImage(data: Uint8Array) {
   const header = data.slice(0, 8);
