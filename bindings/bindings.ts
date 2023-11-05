@@ -19,41 +19,40 @@ function readPointer(v: any): Uint8Array {
   return buf
 }
 
-const url = new URL("../target/debug", import.meta.url)
+const url = new URL(
+  "https://github.com/skanehira/deno-silicon/releases/download/v1.0.0/",
+  import.meta.url,
+)
 
-let uri = url.pathname
+import { dlopen, FetchOptions } from "https://deno.land/x/plug@1.0.1/mod.ts"
+let uri = url.toString()
 if (!uri.endsWith("/")) uri += "/"
 
-// https://docs.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya#parameters
-if (Deno.build.os === "windows") {
-  uri = uri.replace(/\//g, "\\")
-  // Remove leading slash
-  if (uri.startsWith("\\")) {
-    uri = uri.slice(1)
-  }
-}
+let darwin: string | { aarch64: string; x86_64: string } = uri
 
-const { symbols } = Deno.dlopen(
-  {
-    darwin: uri + "libdeno_silicon.dylib",
-    windows: uri + "deno_silicon.dll",
-    linux: uri + "libdeno_silicon.so",
-    freebsd: uri + "libdeno_silicon.so",
-    netbsd: uri + "libdeno_silicon.so",
-    aix: uri + "libdeno_silicon.so",
-    solaris: uri + "libdeno_silicon.so",
-    illumos: uri + "libdeno_silicon.so",
-  }[Deno.build.os],
-  {
-    font_list: { parameters: [], result: "buffer", nonblocking: false },
-    generate: {
-      parameters: ["buffer", "usize"],
-      result: "buffer",
-      nonblocking: false,
-    },
-    theme_list: { parameters: [], result: "buffer", nonblocking: false },
+const opts: FetchOptions = {
+  name: "deno_silicon",
+  url: {
+    darwin,
+    windows: uri,
+    linux: uri,
   },
-)
+  suffixes: {
+    darwin: {
+      aarch64: "_arm64",
+    },
+  },
+  cache: "use",
+}
+const { symbols } = await dlopen(opts, {
+  font_list: { parameters: [], result: "buffer", nonblocking: false },
+  generate: {
+    parameters: ["buffer", "usize"],
+    result: "buffer",
+    nonblocking: false,
+  },
+  theme_list: { parameters: [], result: "buffer", nonblocking: false },
+})
 export type Options = {
   /**
    * Source code
